@@ -105,6 +105,7 @@ class TwitterClient: BDBOAuth1SessionManager {
 		User.currentUser = nil
 		deauthorize()
 		NotificationCenter.default.post(name: User.userDidLogoutNotificationName, object: nil)
+		
 	}
 	
 	// Post a tweet
@@ -148,24 +149,5 @@ class TwitterClient: BDBOAuth1SessionManager {
 		}
 	}
 	
-
-	
-//	func homeTimeline(success: @escaping ([Tweet]) -> (), failure: @escaping (Error) -> ()) {
-//		get("1.1/statuses/home_timeline.json", parameters: nil, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
-//			
-//			print("timeline: \(response)")
-//			let dicts = response as! [[String: Any?]]
-//			let tweets = Tweet.tweetsWithArray(dicts: dicts)
-//			success(tweets)
-//			//			for tweet in tweets {
-//			//				print(tweet.text ?? "no tweets")
-//			//			}
-//			
-//		}, failure: { (task: URLSessionDataTask?, error: Error) in
-//			//			print("Error getting home timeline: \(error.localizedDescription)")
-//			failure(error)
-//			
-//		})
-//	}
 	
 }

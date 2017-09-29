@@ -10,24 +10,51 @@ import UIKit
 
 class TweetsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
 	@IBOutlet weak var tableView: UITableView!
+	@IBOutlet weak var birdImage: UIImageView!
+
+	@IBOutlet weak var newTweetButton: UIBarButtonItem!
+	
+	@IBOutlet weak var logoutButton: UIBarButtonItem!
+	
 	var tweets: [Tweet] = [Tweet]()
+	
+	
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		tableView.delegate = self
 		tableView.dataSource = self
+		tableView.estimatedRowHeight = 120
+		tableView.rowHeight = UITableViewAutomaticDimension
 		
 		TwitterClient.sharedInstance.homeTimeline(success: { (tweets: [Tweet]) in
 			self.tweets = tweets
 			self.tableView.reloadData()	
-		}, failure: { (Error) in
-			print("Could not find tweets")
+		}, failure: { (error: Error) in
+			print("Could not find tweets: \(error.localizedDescription)")
 		})
+		
+		let origImage = UIImage(named: "bird")
+		let tintedImage = origImage?.withRenderingMode(.alwaysTemplate)
+		birdImage.image = tintedImage
+		birdImage.tintColor = UIColor.TwitterColors.Blue
+		
+		logoutButton.tintColor = UIColor.TwitterColors.Blue
+		newTweetButton.tintColor = UIColor.TwitterColors.Blue
+		
+		self.navigationController?.navigationBar.barTintColor = .white
+		self.navigationController?.navigationBar.backgroundColor = .white
+
+		
 	}
+	
+
 
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		return UITableViewCell()
+		let cell = tableView.dequeueReusableCell(withIdentifier: "TweetCell") as! TweetCell
+		cell.tweet = tweets[indexPath.row]
 		
+		return cell
 	}
 	
 	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -38,9 +65,25 @@ class TweetsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
 	@IBAction func logoutButtonClicked(_ sender: Any) {
 		TwitterClient.sharedInstance.logout()
 	}
+	
+	
+	@IBAction func didPostNewTweet(segue: UIStoryboardSegue) {
+		//do something here
+		
+//		if let prefsVC = segue.source as? FiltersVC {
+//			self.preferences = prefsVC.preferencesFromTableData()
+//		}
+		
+	}
+	
+	@IBAction func didCancelNewTweet(segue: UIStoryboardSegue) {
+		print("TWEET CANCELLED")
+	}
 
 
 }
+
+
 
 
 extension UIColor {

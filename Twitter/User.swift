@@ -49,7 +49,8 @@ class User: NSObject {
 				defaults.set(data, forKey: "currentUserData")
 
 			} else {
-				defaults.set(nil, forKey: "currentUserData")
+//				defaults.set(nil, forKey: "currentUserData")
+				defaults.removeObject(forKey: "currentUserData")
 
 			}
 			
