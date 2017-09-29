@@ -35,7 +35,7 @@ class TwitterClient: BDBOAuth1SessionManager {
 				return
 			}
 			
-			let url = URL(string: "https://api.twitter.com/oauth/authorize?oauth_token=\(token)")
+			let url = URL(string: "\(baseUrl)/oauth/authorize?oauth_token=\(token)")
 			UIApplication.shared.open(url!, options: [:], completionHandler: nil)
 			
 		}) {(error: Error?) -> Void in

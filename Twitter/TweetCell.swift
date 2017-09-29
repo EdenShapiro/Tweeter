@@ -31,15 +31,15 @@ class TweetCell: UITableViewCell {
 //			replyButton 
 //			replyCountLabel =
 			if tweet.retweeted {
-				setRetweetButtonActivated()
+				setButtonToActivated(button: retweetButton, name: "retweet")
 			} else {
-				setRetweetButtonDeactivated()
+				setButtonToDeactivated(button: retweetButton, name: "retweet")
 			}
 			retweetCountLabel.text = "\(tweet.retweetCount)"
 			if tweet.favorited {
-				setFavoriteButtonActivated()
+				setButtonToActivated(button: favoriteButton, name: "favorite")
 			} else {
-				setFavoriteButtonDeactivated()
+				setButtonToDeactivated(button: favoriteButton, name: "favorite")
 			}
 			favoriteCountLabel.text = "\(tweet.favoritesCount)"
 			if let user = tweet.tweeter {
@@ -58,11 +58,11 @@ class TweetCell: UITableViewCell {
 
 	@IBAction func favoriteButtonClicked(_ sender: Any) {
 		if favoriteButton.isSelected {
-			setFavoriteButtonDeactivated()
+			setButtonToDeactivated(button: favoriteButton, name: "favorite")
 			//-send favorite post request deleting favorite
 			//decrement favorite count
 		} else {
-			setFavoriteButtonActivated()
+			setButtonToActivated(button: favoriteButton, name: "favorite")
 			//-send favorite post request
 			//-increment favoritecount
 		}
@@ -70,59 +70,54 @@ class TweetCell: UITableViewCell {
 	}
 	
 	@IBAction func retweetButtonClicked(_ sender: Any) {
-		//create alertview asking:
-		//-retweet
-		//-quote tweet
-		// cancel
-		//
-		//if retweet:
-		//-send retweet post request
-		//-turn retweet button and retweetcountlabel green
-		//if cancel:
-		//do nothing
+		if retweetButton.isSelected {
+			//prompt to undo retweet
+			//if yes: setButtonToDeactivated(button: retweetButton, name: "retweet")
+		} else {
+			//create alertview asking:
+			//-retweet
+			//-quote tweet
+			// cancel
+			//
+			//if retweet:
+			//-send retweet post request
+			//setButtonToActivated(button: retweetButton, name: "retweet")
+			//if cancel:
+			//do nothing
+		}
+		
 		
 	}
 
-	func setFavoriteButtonActivated(){
-		favoriteButton.isSelected = true
-		let origImage = UIImage(named: "favorite")
-		let tintedImage = origImage?.withRenderingMode(.alwaysTemplate)
-		favoriteButton.setImage(tintedImage, for: .selected)
-		favoriteButton.tintColor = .red
-		favoriteCountLabel.textColor = .red
+	
+	func setButtonToActivated(button: UIButton, name: String){
+		button.isSelected = true
+		let orginalImage = button.imageView?.image
+		let newColorImage = orginalImage?.withRenderingMode(.alwaysTemplate)
+		button.setImage(newColorImage, for: .selected)
+		if name == "favorite" {
+			favoriteButton.tintColor = .red
+			favoriteCountLabel.textColor = .red
+		} else if name == "retweet" {
+			retweetButton.tintColor = .green
+			retweetCountLabel.textColor = .green
+		}
 	}
 	
-	func setFavoriteButtonDeactivated(){
-		favoriteButton.isSelected = false
-		let origImage = UIImage(named: "favorite")
-		let tintedImage = origImage?.withRenderingMode(.alwaysTemplate)
-		favoriteButton.setImage(tintedImage, for: .normal)
-		favoriteButton.tintColor = .darkGray
-		favoriteCountLabel.textColor = .darkGray
-
+	func setButtonToDeactivated(button: UIButton, name: String){
+		button.isSelected = false
+		let orginalImage = button.imageView?.image
+		let newColorImage = orginalImage?.withRenderingMode(.alwaysTemplate)
+		button.setImage(newColorImage, for: .normal)
+		button.tintColor = .darkGray
+		if name == "favorite" {
+			favoriteCountLabel.textColor = .darkGray
+		} else if name == "retweet" {
+			retweetCountLabel.textColor = .darkGray
+		}
 	}
 	
-	func setRetweetButtonActivated(){
-		let origImage = UIImage(named: "retweet")
-		let tintedImage = origImage?.withRenderingMode(.alwaysTemplate)
-		retweetButton.setImage(tintedImage, for: .selected)
-		retweetButton.tintColor = .green
-		retweetCountLabel.textColor = .green
-	}
 	
-	func setRetweetButtonDeactivated(){
-		let origImage = UIImage(named: "retweet")
-		let tintedImage = origImage?.withRenderingMode(.alwaysTemplate)
-		retweetButton.setImage(tintedImage, for: .normal)
-		retweetButton.tintColor = .darkGray
-		retweetCountLabel.textColor = .darkGray
-	}
-	
-
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
