@@ -16,14 +16,20 @@ class Tweet: NSObject {
 	var replyCount: Int = 0
 	var favorited: Bool = false
 	var retweeted: Bool = false
-	var replied: Bool = false
+//	var replied: Bool = false
 	var tweeter: User?
 	
 	init(dict: [String: Any?]){
 		text = dict["text"] as? String
 		retweetCount = (dict["retweet_count"] as? Int) ?? 0
 		favoritesCount = (dict["favourites_count"] as? Int) ?? 0
-		
+		if let replyCount = dict["reply_count"] as? Int {
+			print("there is a replycount")
+			self.replyCount = replyCount
+		} else {
+			print("there is NO reply count")
+		}
+		replyCount = (dict["reply_count"] as? Int) ?? 0
 		if let timeStampString = dict["created_at"] as? String {
 			print(timeStampString)
 			

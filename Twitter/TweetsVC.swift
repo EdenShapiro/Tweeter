@@ -79,7 +79,16 @@ class TweetsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
 	@IBAction func didCancelNewTweet(segue: UIStoryboardSegue) {
 		print("TWEET CANCELLED")
 	}
-
+	
+	
+	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+		print("in prep for segue")
+		let tweetDetailsVC = segue.destination as! TweetDetailVC
+		if let cell = sender as? TweetCell, let indexPath = tableView.indexPath(for: cell) {
+			print("inside of if let")
+			tweetDetailsVC.tweet = tweets[indexPath.row]
+		}
+	}
 
 }
 

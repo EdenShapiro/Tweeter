@@ -28,8 +28,8 @@ class TweetCell: UITableViewCell {
 			timeStampLabel.text = "∙ \(tweet.createdAt!)"
 
 			tweetContentsLabel.text = tweet.text
-//			replyButton 
-//			replyCountLabel =
+			setButtonToDeactivated(button: replyButton, name: "reply")
+			replyCountLabel.text = "\(tweet.replyCount)"
 			if tweet.retweeted {
 				setButtonToActivated(button: retweetButton, name: "retweet")
 			} else {

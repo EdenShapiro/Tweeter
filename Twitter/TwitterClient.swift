@@ -149,5 +149,29 @@ class TwitterClient: BDBOAuth1SessionManager {
 		}
 	}
 	
+	// Unretweet
+	//POST https://api.twitter.com/1.1/statuses/unretweet/241259202004267009.json
+	func unretweet(tweetID: Int, success: @escaping ((Bool, Int)) -> (), failure:
+		@escaping (Error) -> ()) {
+		
+		let params: [String: Any] = ["id": "\(tweetID)"]
+		
+		post("1.1/statuses/unretweet.json", parameters: params, progress: nil, success: {
+			(task: URLSessionDataTask, response: Any?) in
+			let response = response as! [String: Any?]
+			
+			//send back true and retweet count
+			let wasRetweeted = response["retweeted"] as! Bool
+			let retweetCount = response["retweet_count"] as! Int
+			success((wasRetweeted, retweetCount))
+		}) { (task: URLSessionDataTask?, error: Error) in
+			failure(error)
+		}
+	}
+	
+	// Favorite
+	// Unfavorite
+	
+	
 	
 }
