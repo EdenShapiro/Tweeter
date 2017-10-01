@@ -35,6 +35,7 @@ class TweetCell: UITableViewCell {
 	@IBOutlet weak var profPicimageViewTopConstraint: NSLayoutConstraint!
 	
 	var retweeterName: String?
+	var indexPath: IndexPath!
 	weak var delegate: TweetCellDelegate?
 	
 	
@@ -94,6 +95,7 @@ class TweetCell: UITableViewCell {
 				retweetedByNameLabel.text = "\(retweetName) Retweeted"
 				retweetedByNameLabel.isHidden = false
 				self.updateConstraints()
+				self.delegate?.updateTweetInfo(indexPath: self.indexPath, tweet: self.tweet)
 					
 			} else {
 					
@@ -139,9 +141,19 @@ class TweetCell: UITableViewCell {
 		if retweetButton.isSelected {
 			let undoRetweet = UIAlertAction(title: "Undo Retweet", style: .default) { action in
 				TwitterClient.sharedInstance.unretweet(tweetID: self.tweet.id!, success: { (originalTweet: Tweet) in
-					self.tweet = originalTweet
-//					self.setupLabelsAndButtons()
-//					self.delegate?.updateTweetInfo(indexPath: self.indexPath, tweet: self.tweet)
+					TwitterClient.sharedInstance.getTweetWithId(tweetID: originalTweet.id!, success: { (tweet: Tweet) in
+						self.retweeterName = nil
+						if let retweetStatus = tweet.retweetStatus{
+							self.retweeterName = tweet.tweeter!.name
+							self.tweet = retweetStatus
+						} else {
+							self.tweet = tweet
+						}
+						
+					}, failure: { (e: Error) in
+						print("Problem fetching tweet with ID: \(e.localizedDescription)")
+					})
+					
 				}, failure: { (e: Error) in
 					print("Error: \(e.localizedDescription)")
 				})
@@ -151,9 +163,21 @@ class TweetCell: UITableViewCell {
 			
 			let retweet = UIAlertAction(title: "Retweet", style: .default) { action in
 				TwitterClient.sharedInstance.retweet(tweetID: self.tweet.id!, success: { (originalTweet: Tweet) in
-					self.tweet = originalTweet
-					print("originalTweet.retweeted: \(originalTweet.retweeted)")
-//					self.setupLabelsAndButtons()
+					
+					TwitterClient.sharedInstance.getTweetWithId(tweetID: originalTweet.id!, success: { (tweet: Tweet) in
+						
+						if let retweetStatus = tweet.retweetStatus{
+							self.retweeterName = tweet.tweeter!.name
+							self.tweet = retweetStatus
+						} else {
+							self.retweeterName = nil
+							self.tweet = tweet
+						}
+						
+					}, failure: { (e: Error) in
+						print("Problem fetching tweet with ID: \(e.localizedDescription)")
+					})
+					
 				}, failure: { (e: Error) in
 					print("Error: \(e.localizedDescription)")
 				})

@@ -9,8 +9,6 @@
 import Foundation
 import BDBOAuth1Manager
 
-//153220282-YUkj24RJfmwFmbQn5nMfbMnHqq9pqnqO60bPYux7
-
 let consumerKey = "L1n2oYOQBvRO73TY8kO3Kslon"
 let consumerSecret = "2LYsvKaooUAOvZVRysbueF0zjFwF6zP6IonKTgWZUIUKHRNXRc"
 let baseUrl = "https://api.twitter.com"
@@ -76,12 +74,8 @@ class TwitterClient: BDBOAuth1SessionManager {
 			let dicts = response as! [[String: Any?]]
 			let tweets = Tweet.tweetsWithArray(dicts: dicts)
 			success(tweets)
-//			for tweet in tweets {
-//				print(tweet.text ?? "no tweets")
-//			}
 			
 		}, failure: { (task: URLSessionDataTask?, error: Error) in
-//			print("Error getting home timeline: \(error.localizedDescription)")
 			failure(error)
 			
 		})
@@ -112,7 +106,7 @@ class TwitterClient: BDBOAuth1SessionManager {
 	}
 	
 	// Post a tweet
-//	POST https://api.twitter.com/1.1/statuses/update.json?status=Maybe%20he%27ll%20finally%20find%20his%20keys.%20%23peterfalk
+	//	POST https://api.twitter.com/1.1/statuses/update.json?status=Maybe%20he%27ll%20finally%20find%20his%20keys.%20%23peterfalk
 	func postTweet(status: String, success: @escaping (Tweet) -> (), failure:
 		@escaping (Error) -> ()) {
 		
@@ -128,11 +122,7 @@ class TwitterClient: BDBOAuth1SessionManager {
 	}
 	
 	// Retweet 
-	// NOTE: this may not work because it's not
-//	POST https://api.twitter.com/1.1/statuses/retweet/243149503589400576.json
-//response:
-//	"retweeted": false,
-//	"retweet_count": 1,
+	//	POST https://api.twitter.com/1.1/statuses/retweet/243149503589400576.json
 
 	func retweet(tweetID: Int, success: @escaping (Tweet) -> (), failure:
 		@escaping (Error) -> ()) {
@@ -141,13 +131,9 @@ class TwitterClient: BDBOAuth1SessionManager {
 		
 		post("1.1/statuses/retweet.json", parameters: params, progress: nil, success: {
 			(task: URLSessionDataTask, response: Any?) in
-//			let response = response as! [String: Any?]
 			let tweet = Tweet(dict: response as! [String: Any?])
 			success(tweet)
-			//send back true and retweet count
-//			let wasRetweeted = response["retweeted"] as! Bool
-//			let retweetCount = response["retweet_count"] as! Int
-//			success((wasRetweeted, retweetCount))
+
 		}) { (task: URLSessionDataTask?, error: Error) in
 			failure(error)
 		}
@@ -162,20 +148,16 @@ class TwitterClient: BDBOAuth1SessionManager {
 		
 		post("1.1/statuses/unretweet.json", parameters: params, progress: nil, success: {
 			(task: URLSessionDataTask, response: Any?) in
-//			let response = response as! [String: Any?]
 			let tweet = Tweet(dict: response as! [String: Any?])
 			success(tweet)
-			//send back true and retweet count
-//			let wasUnretweeted = response["retweeted"] as! Bool
-//			let retweetCount = response["retweet_count"] as! Int
-//			success((wasUnretweeted, retweetCount))
+
 		}) { (task: URLSessionDataTask?, error: Error) in
 			failure(error)
 		}
 	}
 	
 	// Favorite
-//	POST https://api.twitter.com/1.1/favorites/create.json?id=243138128959913986
+	//	POST https://api.twitter.com/1.1/favorites/create.json?id=243138128959913986
 	func favorite(tweetID: Int, success: @escaping (Tweet) -> (), failure:
 		@escaping (Error) -> ()) {
 		
@@ -183,20 +165,16 @@ class TwitterClient: BDBOAuth1SessionManager {
 		
 		post("1.1/favorites/create.json", parameters: params, progress: nil, success: {
 			(task: URLSessionDataTask, response: Any?) in
-//			let response = response as! [String: Any?]
 			let tweet = Tweet(dict: response as! [String: Any?])
 			success(tweet)
-			//send back true and favorites count
-//			let wasFavorited = response["favorited"] as! Bool
-//			let favoritesCount = response["favourites_count"] as! Int
-//			success((wasFavorited, favoritesCount))
+
 		}) { (task: URLSessionDataTask?, error: Error) in
 			failure(error)
 		}
 	}
 	
 	// Unfavorite
-//	POST https://api.twitter.com/1.1/favorites/destroy.json?id=243138128959913986
+	//	POST https://api.twitter.com/1.1/favorites/destroy.json?id=243138128959913986
 	func unfavorite(tweetID: Int, success: @escaping (Tweet) -> (), failure:
 		@escaping (Error) -> ()) {
 		
@@ -206,12 +184,7 @@ class TwitterClient: BDBOAuth1SessionManager {
 			(task: URLSessionDataTask, response: Any?) in
 			let tweet = Tweet(dict: response as! [String: Any?])
 			success(tweet)
-//			let response = response as! [String: Any?]
-//
-//			//send back true and favorites count
-//			let wasUnfavorited = response["favorited"] as! Bool
-//			let favoritesCount = response["favourites_count"] as! Int
-//			success((wasUnfavorited, favoritesCount))
+
 		}) { (task: URLSessionDataTask?, error: Error) in
 			failure(error)
 		}
@@ -234,7 +207,21 @@ class TwitterClient: BDBOAuth1SessionManager {
 	}
 	
 	// Fetch tweet with ID
-	
-	
-	
+	//	GET https://api.twitter.com/1.1/statuses/show.json?id=210462857140252672
+	func getTweetWithId(tweetID: Int, success: @escaping (Tweet) -> (), failure: @escaping (Error) -> ()) {
+		
+		let params: [String: Any] = ["id": "\(tweetID)", "include_my_retweet": "true"]
+		
+		get("1.1/statuses/show.json", parameters: params, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
+			
+			let tweet = Tweet(dict: response as! [String: Any?])
+			success(tweet)
+
+		}, failure: { (task: URLSessionDataTask?, error: Error) in
+
+			failure(error)
+			
+		})
+	}
+
 }

@@ -126,6 +126,8 @@ extension TweetsTableVC: UITableViewDelegate, UITableViewDataSource {
 	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: "TweetCell") as! TweetCell
 		cell.delegate = self
+		cell.retweeterName = nil
+		cell.indexPath = indexPath
 		if let retweetStatus = tweets[indexPath.row].retweetStatus {
 			cell.retweeterName = tweets[indexPath.row].tweeter!.name
 			cell.tweet = retweetStatus
