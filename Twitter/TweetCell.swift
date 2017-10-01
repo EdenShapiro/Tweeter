@@ -14,6 +14,7 @@ import NSDateMinimalTimeAgo
 	func createReplyTweet(tweetId: Int, screenName: String)
 	func updateTweetInfo(indexPath: IndexPath, tweet: Tweet)
 	func presentAlertViewController(alertController: UIAlertController)
+	func reloadCell(cell: TweetCell, tweet: Tweet, success: @escaping () -> (), failure: @escaping () -> ())
 }
 
 class TweetCell: UITableViewCell {
@@ -35,7 +36,6 @@ class TweetCell: UITableViewCell {
 	@IBOutlet weak var profPicimageViewTopConstraint: NSLayoutConstraint!
 	
 	var retweeterName: String?
-	var indexPath: IndexPath!
 	weak var delegate: TweetCellDelegate?
 	
 	
@@ -87,26 +87,29 @@ class TweetCell: UITableViewCell {
 				
 			}
 			
-			if let retweetName = retweeterName {
+			updateCellToShowRetweetStatus()
 			
-				profPicimageViewTopConstraint.constant = 20
-				retweetSmallImageView.changeToColor(color: .darkGray)
-				retweetSmallImageView.isHidden = false
-				retweetedByNameLabel.text = "\(retweetName) Retweeted"
-				retweetedByNameLabel.isHidden = false
-				self.updateConstraints()
-				self.delegate?.updateTweetInfo(indexPath: self.indexPath, tweet: self.tweet)
-					
-			} else {
-					
-				profPicimageViewTopConstraint.constant = 0
-				retweetedByNameLabel.isHidden = true
-				retweetSmallImageView.isHidden = true
-				self.updateConstraints()
-
-			}
 		}
 
+	}
+	
+	func updateCellToShowRetweetStatus(){
+		if let retweetName = retweeterName {
+			profPicimageViewTopConstraint.constant = 20
+			retweetSmallImageView.changeToColor(color: .darkGray)
+			retweetSmallImageView.isHidden = false
+			retweetedByNameLabel.text = "\(retweetName) Retweeted"
+			retweetedByNameLabel.isHidden = false
+			self.updateConstraints()
+
+		} else {
+			profPicimageViewTopConstraint.constant = 0
+			retweetedByNameLabel.isHidden = true
+			retweetSmallImageView.isHidden = true
+			self.updateConstraints()
+		}
+//		self.delegate?.reloadCell(cell: self, tweet: self.tweet)
+//		self.delegate?.updateTweetInfo(indexPath: self.indexPath, tweet: self.tweet)
 	}
 
 	@IBAction func favoriteButtonClicked(_ sender: Any) {
@@ -141,18 +144,19 @@ class TweetCell: UITableViewCell {
 		if retweetButton.isSelected {
 			let undoRetweet = UIAlertAction(title: "Undo Retweet", style: .default) { action in
 				TwitterClient.sharedInstance.unretweet(tweetID: self.tweet.id!, success: { (originalTweet: Tweet) in
-					TwitterClient.sharedInstance.getTweetWithId(tweetID: originalTweet.id!, success: { (tweet: Tweet) in
+					TwitterClient.sharedInstance.unretweet(tweetID: originalTweet.id!, success: { (originalTweet: Tweet) in
 						self.retweeterName = nil
-						if let retweetStatus = tweet.retweetStatus{
-							self.retweeterName = tweet.tweeter!.name
-							self.tweet = retweetStatus
-						} else {
-							self.tweet = tweet
-						}
-						
+						self.delegate?.reloadCell(cell: self, tweet: originalTweet, success: { () in
+							self.retweetButton.setDeactivated(label: self.retweetCountLabel)
+							
+						}, failure: { () in
+							print("Error: Did not reload cell")
+						})
+						//					self.delegate?.reloadCell(cell: self, tweet: originalTweet)
 					}, failure: { (e: Error) in
-						print("Problem fetching tweet with ID: \(e.localizedDescription)")
+						print("Error: \(e.localizedDescription)")
 					})
+					
 					
 				}, failure: { (e: Error) in
 					print("Error: \(e.localizedDescription)")
@@ -160,23 +164,18 @@ class TweetCell: UITableViewCell {
 			}
 			alertController.addAction(undoRetweet)
 		} else {
-			
 			let retweet = UIAlertAction(title: "Retweet", style: .default) { action in
 				TwitterClient.sharedInstance.retweet(tweetID: self.tweet.id!, success: { (originalTweet: Tweet) in
-					
-					TwitterClient.sharedInstance.getTweetWithId(tweetID: originalTweet.id!, success: { (tweet: Tweet) in
-						
-						if let retweetStatus = tweet.retweetStatus{
-							self.retweeterName = tweet.tweeter!.name
-							self.tweet = retweetStatus
-						} else {
-							self.retweeterName = nil
-							self.tweet = tweet
-						}
-						
-					}, failure: { (e: Error) in
-						print("Problem fetching tweet with ID: \(e.localizedDescription)")
+					self.retweeterName = User.currentUser?.name
+					self.delegate?.reloadCell(cell: self, tweet: originalTweet, success: { () in
+						print("We're good.")
+					}, failure: { () in
+						print("Error: Did not reload cell")
 					})
+//						self.retweetButton.setDeactivated(label: self.retweetCountLabel)
+//					self.updateCellToShowRetweetStatus()
+//					self.retweetCountLabel.text = "\(self.tweet.retweetCount + 1)"
+//					self.retweetButton.setActivated(color: .green, label: self.retweetCountLabel)
 					
 				}, failure: { (e: Error) in
 					print("Error: \(e.localizedDescription)")
@@ -198,29 +197,26 @@ class TweetCell: UITableViewCell {
 
 }
 
-extension UIButton {
-	func setActivated(color: UIColor, label: UILabel?){
-		self.isSelected = true
-		let orginalImage = self.imageView?.image
-		let newColorImage = orginalImage?.withRenderingMode(.alwaysTemplate)
-		self.setImage(newColorImage, for: .selected)
-		self.tintColor = color
-		if let lab = label {
-			lab.textColor = color
-		}
-	}
-	
-	func setDeactivated(label: UILabel?){
-		self.isSelected = false
-		let orginalImage = self.imageView?.image
-		let newColorImage = orginalImage?.withRenderingMode(.alwaysTemplate)
-		self.setImage(newColorImage, for: .normal)
-		self.tintColor = .darkGray
-		if let lab = label {
-			lab.textColor = .darkGray
-		}
-		
-	}
-	
-	
-}
+
+//					
+
+
+
+
+//					TwitterClient.sharedInstance.getTweetWithId(tweetID: originalTweet.id!, success: { (tweet: Tweet) in
+//						self.retweeterName = nil
+//						if let retweetStatus = tweet.retweetStatus{
+//							self.retweeterName = tweet.tweeter!.name
+//							self.tweet = retweetStatus
+//							self.profPicimageViewTopConstraint.constant = 0
+//
+//						} else {
+//
+//							self.tweet = tweet
+//
+//						}
+//
+//					}, failure: { (e: Error) in
+//						print("Problem fetching tweet with ID: \(e.localizedDescription)")
+//					})
+

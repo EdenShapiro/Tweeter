@@ -9,6 +9,10 @@
 import UIKit
 import NSDateMinimalTimeAgo
 
+//@objc protocol TweetDetailDelegate {
+//	func updateTweetInfo(indexPath: IndexPath, tweet: Tweet)
+//}
+
 class TweetDetailVC: UIViewController {
 
 	@IBOutlet weak var profilePicImageView: UIImageView!
@@ -36,8 +40,12 @@ class TweetDetailVC: UIViewController {
 
     }
 	
+	
+	
 	func setupLabelsAndButtons(){
-		timeStampLabel.text = "\(tweet.createdAt!)"
+		let formatter = DateFormatter()
+		formatter.dateFormat = "M/dd/yy, h:mm a"
+		timeStampLabel.text = "\(formatter.string(from: tweet.createdAt!))"
 		tweetContentsLabel.text = tweet.text
 		if tweet.retweetCount > 0 {
 			retweetCountLabel.text = "\(tweet.retweetCount)"
@@ -87,8 +95,10 @@ class TweetDetailVC: UIViewController {
 		if retweetButton.isSelected {
 			let undoRetweet = UIAlertAction(title: "Undo Retweet", style: .default) { action in
 				TwitterClient.sharedInstance.unretweet(tweetID: self.tweet.id!, success: { (originalTweet: Tweet) in
-					self.tweet = originalTweet
-					self.setupLabelsAndButtons()
+//					self.tweet = originalTweet
+//					self.setupLabelsAndButtons()
+					self.retweetButton.setDeactivated(label: nil)
+					self.retweetCountLabel.text = "\(self.tweet.retweetCount - 1)"
 					self.delegate?.updateTweetInfo(indexPath: self.indexPath, tweet: originalTweet)
 				}, failure: { (e: Error) in
 					print("Error: \(e.localizedDescription)")
@@ -99,10 +109,12 @@ class TweetDetailVC: UIViewController {
 			
 			let retweet = UIAlertAction(title: "Retweet", style: .default) { action in
 				TwitterClient.sharedInstance.retweet(tweetID: self.tweet.id!, success: { (originalTweet: Tweet) in
-					self.tweet = originalTweet
+//					self.tweet = originalTweet
 					print("originalTweet.retweeted: \(originalTweet.retweeted)")
-					self.setupLabelsAndButtons()
-					self.delegate?.updateTweetInfo(indexPath: self.indexPath, tweet: self.tweet)
+//					self.setupLabelsAndButtons()
+					self.retweetButton.setActivated(color: .green, label: nil)
+					self.retweetCountLabel.text = "\(self.tweet.retweetCount + 1)"
+					self.delegate?.updateTweetInfo(indexPath: self.indexPath, tweet: originalTweet)
 				}, failure: { (e: Error) in
 					print("Error: \(e.localizedDescription)")
 				})
