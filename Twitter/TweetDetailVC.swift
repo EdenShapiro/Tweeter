@@ -7,35 +7,142 @@
 //
 
 import UIKit
+import NSDateMinimalTimeAgo
 
 class TweetDetailVC: UIViewController {
 
-	var tweet: Tweet! //{
-//		didSet {
-//			
-//		}
-//	}
+	@IBOutlet weak var profilePicImageView: UIImageView!
+	@IBOutlet weak var nameLabel: UILabel!
+	@IBOutlet weak var screenNameLabel: UILabel!
+	@IBOutlet weak var timeStampLabel: UILabel!
+	@IBOutlet weak var replyButton: UIButton!
+	@IBOutlet weak var retweetButton: UIButton!
+	@IBOutlet weak var favoriteButton: UIButton!
+	@IBOutlet weak var tweetContentsLabel: UILabel!
+	@IBOutlet weak var retweetCountLabel: UILabel!
+	@IBOutlet weak var favoriteCountLabel: UILabel!
+	@IBOutlet weak var retweetsLabel: UILabel!
+	@IBOutlet weak var likesLabel: UILabel!
+	
+	
+	var tweet: Tweet!
+	var indexPath: IndexPath!
+	weak var delegate: TweetCellDelegate?
 	
     override func viewDidLoad() {
         super.viewDidLoad()
+		
+		setupLabelsAndButtons()
 
-        // Do any additional setup after loading the view.
     }
+	
+	func setupLabelsAndButtons(){
+		timeStampLabel.text = "\(tweet.createdAt!)"
+		tweetContentsLabel.text = tweet.text
+		if tweet.retweetCount > 0 {
+			retweetCountLabel.text = "\(tweet.retweetCount)"
+		} else {
+			retweetsLabel.isHidden = true
+			retweetCountLabel.isHidden = true
+		}
+		if tweet.favoritesCount > 0 {
+			favoriteCountLabel.text = "\(tweet.favoritesCount)"
+		} else {
+			likesLabel.isHidden = true
+			favoriteCountLabel.isHidden = true
+		}
+		replyButton.setDeactivated(label: nil)
+		if tweet.retweeted {
+			retweetButton.setActivated(color: .green, label: nil)
+		} else {
+			retweetButton.setDeactivated(label: nil)
+		}
+		
+		if tweet.favorited {
+			favoriteButton.setActivated(color: .red, label: nil)
+		} else {
+			favoriteButton.setDeactivated(label: nil)
+		}
+		
+		if let user = tweet.tweeter {
+			if let url = user.profileURL{
+				profilePicImageView.setImageWith(url)
+				profilePicImageView.clipsToBounds = true
+				profilePicImageView.layer.cornerRadius = 7
+			}
+			nameLabel.text = user.name
+			screenNameLabel.text = "@\(user.screenName!)"
+			
+		}
+	}
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
+	@IBAction func replyButtonClicked(_ sender: Any) {
+		delegate?.createReplyTweet(tweetId: tweet.id!, screenName: (tweet.tweeter?.screenName)!)
+	}
+	
+	@IBAction func retweetButtonClicked(_ sender: Any) {
+		let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+		let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+		alertController.addAction(cancelAction)
+		if retweetButton.isSelected {
+			let undoRetweet = UIAlertAction(title: "Undo Retweet", style: .default) { action in
+				TwitterClient.sharedInstance.unretweet(tweetID: self.tweet.id!, success: { (originalTweet: Tweet) in
+					self.tweet = originalTweet
+					self.setupLabelsAndButtons()
+					self.delegate?.updateTweetInfo(indexPath: self.indexPath, tweet: originalTweet)
+				}, failure: { (e: Error) in
+					print("Error: \(e.localizedDescription)")
+				})
+			}
+			alertController.addAction(undoRetweet)
+		} else {
+			
+			let retweet = UIAlertAction(title: "Retweet", style: .default) { action in
+				TwitterClient.sharedInstance.retweet(tweetID: self.tweet.id!, success: { (originalTweet: Tweet) in
+					self.tweet = originalTweet
+					print("originalTweet.retweeted: \(originalTweet.retweeted)")
+					self.setupLabelsAndButtons()
+					self.delegate?.updateTweetInfo(indexPath: self.indexPath, tweet: self.tweet)
+				}, failure: { (e: Error) in
+					print("Error: \(e.localizedDescription)")
+				})
+			}
+			alertController.addAction(retweet)
+		}
+		self.present(alertController, animated: true)
 
-    /*
-    // MARK: - Navigation
+	}
+	
+	@IBAction func favoriteButtonClicked(_ sender: Any) {
+		
+		if favoriteButton.isSelected {
+			favoriteButton.setDeactivated(label: nil)
+			TwitterClient.sharedInstance.unfavorite(tweetID: self.tweet.id!, success: { (tweet:Tweet) in
+				self.tweet = tweet
+				self.setupLabelsAndButtons()
+				self.delegate?.updateTweetInfo(indexPath: self.indexPath, tweet: self.tweet)
+			}, failure: { (e: Error) in
+				print("Error: \(e.localizedDescription)")
+			})
+			//-send favorite post request deleting favorite
+			//decrement favorite count
+		} else {
+			TwitterClient.sharedInstance.favorite(tweetID: self.tweet.id!, success: { (tweet: Tweet) in
+				self.tweet = tweet
+				self.setupLabelsAndButtons()
+				self.delegate?.updateTweetInfo(indexPath: self.indexPath, tweet: self.tweet)
+			}, failure: { (e: Error) in
+				print("Error: \(e.localizedDescription)")
+			})
+			favoriteButton.setActivated(color: .red, label: nil)
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
+			//-send favorite post request
+			//-increment favoritecount
+		}
+
+	}
+	
+	
+
 
 }

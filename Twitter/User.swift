@@ -38,6 +38,7 @@ class User: NSObject {
 					_currentUser = User(dictionary: dict)
 				}
 			}
+			
 			return _currentUser
 		}
 		set(user){

@@ -8,6 +8,13 @@
 
 import UIKit
 import AFNetworking
+import NSDateMinimalTimeAgo
+
+@objc protocol TweetCellDelegate {
+	func createReplyTweet(tweetId: Int, screenName: String)
+	func updateTweetInfo(indexPath: IndexPath, tweet: Tweet)
+	func presentAlertViewController(alertController: UIAlertController)
+}
 
 class TweetCell: UITableViewCell {
 	
@@ -22,26 +29,52 @@ class TweetCell: UITableViewCell {
 	@IBOutlet weak var retweetCountLabel: UILabel!
 	@IBOutlet weak var favoriteButton: UIButton!
 	@IBOutlet weak var favoriteCountLabel: UILabel!
+	@IBOutlet weak var retweetSmallImageView: UIImageView!
+	@IBOutlet weak var retweetedByNameLabel: UILabel!
+	
+	@IBOutlet weak var profPicimageViewTopConstraint: NSLayoutConstraint!
+	
+	var retweeterName: String?
+	weak var delegate: TweetCellDelegate?
+	
 	
 	var tweet: Tweet! {
 		didSet {
-			timeStampLabel.text = "∙ \(tweet.createdAt!)"
-
+			let formatter = DateFormatter()
+			formatter.dateFormat = "M/dd/yy"
+			let charset = CharacterSet(charactersIn: "dwy")
+			if let date = tweet.createdAt {
+				let nsDate = date as NSDate
+				if nsDate.timeAgo().contains("mo") || nsDate.timeAgo().rangeOfCharacter(from: charset) != nil {
+					timeStampLabel.text = "∙ \(formatter.string(from: tweet.createdAt!))"
+				} else {
+					timeStampLabel.text = "∙ \(nsDate.timeAgo()!)"
+				}
+			}
 			tweetContentsLabel.text = tweet.text
-			setButtonToDeactivated(button: replyButton, name: "reply")
-			replyCountLabel.text = "\(tweet.replyCount)"
+			if tweet.replyCount > 0 {
+				replyCountLabel.text = "\(tweet.replyCount)"
+			}
+			if tweet.retweetCount > 0 {
+				retweetCountLabel.text = "\(tweet.retweetCount)"
+			}
+			if tweet.favoritesCount > 0 {
+				favoriteCountLabel.text = "\(tweet.favoritesCount)"
+			}
+			
+			replyButton.setDeactivated(label: nil)
 			if tweet.retweeted {
-				setButtonToActivated(button: retweetButton, name: "retweet")
+				retweetButton.setActivated(color: .green, label: retweetCountLabel)
 			} else {
-				setButtonToDeactivated(button: retweetButton, name: "retweet")
+				retweetButton.setDeactivated(label: retweetCountLabel)
 			}
-			retweetCountLabel.text = "\(tweet.retweetCount)"
+
 			if tweet.favorited {
-				setButtonToActivated(button: favoriteButton, name: "favorite")
+				favoriteButton.setActivated(color: .red, label: favoriteCountLabel)
 			} else {
-				setButtonToDeactivated(button: favoriteButton, name: "favorite")
+				favoriteButton.setDeactivated(label: favoriteCountLabel)
 			}
-			favoriteCountLabel.text = "\(tweet.favoritesCount)"
+			
 			if let user = tweet.tweeter {
 				if let url = user.profileURL{
 					profilePicImageView.setImageWith(url)
@@ -52,72 +85,86 @@ class TweetCell: UITableViewCell {
 				screenNameLabel.text = "@\(user.screenName!)"
 				
 			}
+			
+			if let retweetName = retweeterName {
+			
+				profPicimageViewTopConstraint.constant = 20
+				retweetSmallImageView.changeToColor(color: .darkGray)
+				retweetSmallImageView.isHidden = false
+				retweetedByNameLabel.text = "\(retweetName) Retweeted"
+				retweetedByNameLabel.isHidden = false
+				self.updateConstraints()
+					
+			} else {
+					
+				profPicimageViewTopConstraint.constant = 0
+				retweetedByNameLabel.isHidden = true
+				retweetSmallImageView.isHidden = true
+				self.updateConstraints()
+
+			}
 		}
 
 	}
 
 	@IBAction func favoriteButtonClicked(_ sender: Any) {
 		if favoriteButton.isSelected {
-			setButtonToDeactivated(button: favoriteButton, name: "favorite")
-			//-send favorite post request deleting favorite
-			//decrement favorite count
+			favoriteButton.setDeactivated(label: favoriteCountLabel)
+			TwitterClient.sharedInstance.unfavorite(tweetID: tweet.id!, success: { (tweet: Tweet) in
+				self.tweet = tweet
+			}, failure: { (e: Error) in
+				print("Error: \(e.localizedDescription)")
+			})
 		} else {
-			setButtonToActivated(button: favoriteButton, name: "favorite")
-			//-send favorite post request
-			//-increment favoritecount
+			favoriteButton.setActivated(color: .red, label: favoriteCountLabel)
+			TwitterClient.sharedInstance.favorite(tweetID: tweet.id!, success: { (tweet: Tweet) in
+				self.tweet = tweet
+			}, failure: { (e: Error) in
+				print("Error: \(e.localizedDescription)")
+			})
 		}
 		
 	}
+	
+	@IBAction func replyButtonClicked(_ sender: Any) {
+		delegate?.createReplyTweet(tweetId: tweet.id!, screenName: (tweet.tweeter?.screenName)!)		
+	}
+	
 	
 	@IBAction func retweetButtonClicked(_ sender: Any) {
+		//create alertview
+		let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+		let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+		alertController.addAction(cancelAction)
 		if retweetButton.isSelected {
-			//prompt to undo retweet
-			//if yes: setButtonToDeactivated(button: retweetButton, name: "retweet")
+			let undoRetweet = UIAlertAction(title: "Undo Retweet", style: .default) { action in
+				TwitterClient.sharedInstance.unretweet(tweetID: self.tweet.id!, success: { (originalTweet: Tweet) in
+					self.tweet = originalTweet
+//					self.setupLabelsAndButtons()
+//					self.delegate?.updateTweetInfo(indexPath: self.indexPath, tweet: self.tweet)
+				}, failure: { (e: Error) in
+					print("Error: \(e.localizedDescription)")
+				})
+			}
+			alertController.addAction(undoRetweet)
 		} else {
-			//create alertview asking:
-			//-retweet
-			//-quote tweet
-			// cancel
-			//
-			//if retweet:
-			//-send retweet post request
-			//setButtonToActivated(button: retweetButton, name: "retweet")
-			//if cancel:
-			//do nothing
+			
+			let retweet = UIAlertAction(title: "Retweet", style: .default) { action in
+				TwitterClient.sharedInstance.retweet(tweetID: self.tweet.id!, success: { (originalTweet: Tweet) in
+					self.tweet = originalTweet
+					print("originalTweet.retweeted: \(originalTweet.retweeted)")
+//					self.setupLabelsAndButtons()
+				}, failure: { (e: Error) in
+					print("Error: \(e.localizedDescription)")
+				})
+			}
+			alertController.addAction(retweet)
 		}
-		
-		
-	}
+		self.delegate?.presentAlertViewController(alertController: alertController)
 
-	
-	func setButtonToActivated(button: UIButton, name: String){
-		button.isSelected = true
-		let orginalImage = button.imageView?.image
-		let newColorImage = orginalImage?.withRenderingMode(.alwaysTemplate)
-		button.setImage(newColorImage, for: .selected)
-		if name == "favorite" {
-			favoriteButton.tintColor = .red
-			favoriteCountLabel.textColor = .red
-		} else if name == "retweet" {
-			retweetButton.tintColor = .green
-			retweetCountLabel.textColor = .green
-		}
+		
+		
 	}
-	
-	func setButtonToDeactivated(button: UIButton, name: String){
-		button.isSelected = false
-		let orginalImage = button.imageView?.image
-		let newColorImage = orginalImage?.withRenderingMode(.alwaysTemplate)
-		button.setImage(newColorImage, for: .normal)
-		button.tintColor = .darkGray
-		if name == "favorite" {
-			favoriteCountLabel.textColor = .darkGray
-		} else if name == "retweet" {
-			retweetCountLabel.textColor = .darkGray
-		}
-	}
-	
-	
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
@@ -125,4 +172,31 @@ class TweetCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
+}
+
+extension UIButton {
+	func setActivated(color: UIColor, label: UILabel?){
+		self.isSelected = true
+		let orginalImage = self.imageView?.image
+		let newColorImage = orginalImage?.withRenderingMode(.alwaysTemplate)
+		self.setImage(newColorImage, for: .selected)
+		self.tintColor = color
+		if let lab = label {
+			lab.textColor = color
+		}
+	}
+	
+	func setDeactivated(label: UILabel?){
+		self.isSelected = false
+		let orginalImage = self.imageView?.image
+		let newColorImage = orginalImage?.withRenderingMode(.alwaysTemplate)
+		self.setImage(newColorImage, for: .normal)
+		self.tintColor = .darkGray
+		if let lab = label {
+			lab.textColor = .darkGray
+		}
+		
+	}
+	
+	
 }

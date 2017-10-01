@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import KRProgressHUD
 
 class NewTweetVC: UIViewController {
 	@IBOutlet weak var profilePictureImageView: UIImageView!
@@ -15,10 +16,14 @@ class NewTweetVC: UIViewController {
 	
 	@IBOutlet weak var tweetTextView: UITextView!
 	
+	
 	var postTweetButton: UIBarButtonItem!
 //	var postTweetButton: UIButton!
 	var characterCountView: UILabel!
+	var finalTweet: Tweet?
 	
+	var replyTweetId: Int?
+	var replyTweetScreenName: String?
 	var characterCount = 140
 	let placeholderText = "What's happening?"
 	
@@ -30,7 +35,11 @@ class NewTweetVC: UIViewController {
 
 		setupAccessoryView()
 		
-		
+		if let screenName = replyTweetScreenName {
+			print("screenName")
+			tweetTextView.textColor = .black
+			tweetTextView.text = "@\(screenName)"
+		}
 		
     }
 	
@@ -88,8 +97,41 @@ class NewTweetVC: UIViewController {
 
 	func didPressTweetButton(){
 		print("postTweetButton clicked")
-		//post tweet
-		self.performSegue(withIdentifier: "didPostNewTweetSegue", sender: self)
+		
+		// Heads Up Display
+		KRProgressHUD.set(style: .black)
+		KRProgressHUD.set(font: .systemFont(ofSize: 15))
+		KRProgressHUD.set(activityIndicatorViewStyle: .gradationColor(head: UIColor.TwitterColors.Blue, tail: UIColor.TwitterColors.DarkBlue))
+		KRProgressHUD.show(withMessage: "Posting Tweet...")
+		//	KRProgressHUD.show(withMessage: "Loading results...")
+		
+		
+		if let replyId = replyTweetId, let replyScreenName = replyTweetScreenName, tweetTextView.text.contains("@\(replyScreenName)"){
+			
+			//post reply
+			TwitterClient.sharedInstance.reply(status: tweetTextView.text, replyToTweetWithId: replyId, success: { (newTweet: Tweet) in
+				KRProgressHUD.showSuccess(withMessage: "Replied!")
+				self.finalTweet = newTweet
+				self.performSegue(withIdentifier: "didPostNewTweetSegue", sender: self)
+			}, failure: { (e: Error) in
+				print(e.localizedDescription)
+				KRProgressHUD.set(font: .systemFont(ofSize: 15))
+				KRProgressHUD.showError(withMessage: "Unable to post reply.")
+			})
+		} else {
+		
+			//post tweet
+			TwitterClient.sharedInstance.postTweet(status: tweetTextView.text, success: {(newTweet: Tweet) in
+				KRProgressHUD.showSuccess(withMessage: "Posted!")
+				self.finalTweet = newTweet
+				self.performSegue(withIdentifier: "didPostNewTweetSegue", sender: self)
+			}, failure: {(e: Error) in
+				print(e.localizedDescription)
+				KRProgressHUD.set(font: .systemFont(ofSize: 15))
+				KRProgressHUD.showError(withMessage: "Unable to post tweet.")
+			})
+		}
+		
 	}
 	
 

@@ -19,18 +19,21 @@ PODS:
   - KRActivityIndicatorView (2.1.0)
   - KRProgressHUD (3.1.0):
     - KRActivityIndicatorView (~> 2.1.0)
+  - NSDateMinimalTimeAgo (0.1.0)
 
 DEPENDENCIES:
   - AFNetworking
   - BDBOAuth1Manager
   - KRProgressHUD
+  - NSDateMinimalTimeAgo
 
 SPEC CHECKSUMS:
   AFNetworking: a0075feb321559dc78d9d85b55d11caa19eabb93
   BDBOAuth1Manager: 92d17d06f8a648602962304cd2f35ae7394fa001
   KRActivityIndicatorView: d1bab0525ff3def4e600ec0cef6bb3057a99ba7d
   KRProgressHUD: 590711f91da7088bce0e7f6abdf273d51359e505
+  NSDateMinimalTimeAgo: 71102cc43bb1aa0b5692c953a1abb8c305691475
 
-PODFILE CHECKSUM: 79270a71b937912fabe040acb82a255e1916ba02
+PODFILE CHECKSUM: 518fe5a355a33efb1695740fc1f8299498f0648f
 
 COCOAPODS: 1.2.0
