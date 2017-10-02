@@ -220,7 +220,7 @@ extension TweetsTableVC: UIScrollViewDelegate {
 	func loadMoreData() {
 		TwitterClient.sharedInstance.homeTimeline(maxID: tweets[tweets.count - 1].id!, success: { (tweets: [Tweet]) in
 			self.isMoreDataLoading = false
-			self.tweets.append(contentsOf: tweets)
+			self.tweets.append(contentsOf: tweets.dropFirst())
 			self.tableView.reloadData()
 			self.loadingMoreView.stopAnimating()
 		}, failure: { (error: Error) in

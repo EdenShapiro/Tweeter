@@ -27,12 +27,12 @@ The following **optional** features are implemented:
 
 The following **additional** features are implemented:
 
-- [ ] Added accessory view to textview, like the real Twitter app
-- [ ] New tweet character limit count changes color to red when fewer than 20 chars left
-- [ ] Edited the cursor position in the textview, like the real Twitter app
-- [ ] Change all fonts and colors to original Twitter app fonts and colors
-- [ ] Speical time stamps: https://puu.sh/xNDuZ/17f1e270e1.png
-- [ ] Shows retweets as retweets in the feed
+- [x] Added accessory view to textview, like the real Twitter app
+- [x] New tweet character limit count changes color to red when fewer than 20 chars left
+- [x] Edited the cursor position in the textview, like the real Twitter app
+- [x] Change all fonts and colors to original Twitter app fonts and colors
+- [x] Speical time stamps: https://puu.sh/xNDuZ/17f1e270e1.png
+- [x] Shows retweets as retweets in the feed
 
 
 
