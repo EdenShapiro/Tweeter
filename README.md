@@ -52,10 +52,13 @@ Please list two areas of the assignment you'd like to **discuss further with you
 Here's a walkthrough of implemented user stories: 
 
 <img src='https://media.giphy.com/media/3ohhwvta1XbVlR4B8I/giphy.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />  
+https://media.giphy.com/media/3ohhwvta1XbVlR4B8I/giphy.gif
 
-<img src='https://media.giphy.com/media/3ohhwJfdHmYj1qj65a/giphy.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />  
+<img src='https://media.giphy.com/media/3ohhwJfdHmYj1qj65a/giphy.gif' title='Video Walkthrough2' width='' alt='Video Walkthrough' />  
+https://media.giphy.com/media/3ohhwJfdHmYj1qj65a/giphy.gif
 
-<img src='https://media.giphy.com/media/l1J9CmBGZc8RyWmkw/giphy.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' /> 
+<img src='https://media.giphy.com/media/l1J9CmBGZc8RyWmkw/giphy.gif' title='Video Walkthrough3' width='' alt='Video Walkthrough' />  
+https://media.giphy.com/media/l1J9CmBGZc8RyWmkw/giphy.gif
 
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
