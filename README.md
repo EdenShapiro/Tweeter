@@ -32,22 +32,31 @@ The following **additional** features are implemented:
 - [x] Edited the cursor position in the textview, like the real Twitter app
 - [x] Change all fonts and colors to original Twitter app fonts and colors
 - [x] Speical time stamps: https://puu.sh/xNDuZ/17f1e270e1.png
+- [x] Special number formatting
 - [x] Shows retweets as retweets in the feed
-
+- [x] Added HUD
+- [x] Added images (that are sized like in the Twitter app)
+- [x] Special formatting for like and retweet counts on detail page (views shift to left, like real app)
+- [x] Custom nav bar
 
 
 
 
 Please list two areas of the assignment you'd like to **discuss further with your peers** during the next class (examples include better ways to implement something, how to extend your app in certain ways, etc):
 
-1.
-2.
+1. Ways to implement link highlighting
+2. How to include gifs and videos
 
 ## Video Walkthrough
 
-Here's a walkthrough of implemented user stories:
+Here's a walkthrough of implemented user stories: 
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://media.giphy.com/media/3ohhwvta1XbVlR4B8I/giphy.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />  
+
+<img src='https://media.giphy.com/media/3ohhwJfdHmYj1qj65a/giphy.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />  
+
+<img src='https://media.giphy.com/media/l1J9CmBGZc8RyWmkw/giphy.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' /> 
+
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
@@ -57,7 +66,7 @@ Describe any challenges encountered while building the app.
 
 ## License
 
-    Copyright [yyyy] [name of copyright owner]
+    Copyright [2017] [Eden Shapiro]
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -75,7 +84,7 @@ Describe any challenges encountered while building the app.
 
 
 ["Close"](https://thenounproject.com/search/?q=x&i=636464) icon by Hui Qin Ng from [the Noun Project](http://thenounproject.com/)  
-
+["Heart", "Reply", and "Repost"](https://thenounproject.com/albertine3/collection/fb-tw-timeline-icon/?oq=twitter&cidx=5&i=438344) icons by Al D from [the Noun Project](http://thenounproject.com/)  
 
 
 

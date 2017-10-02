@@ -19,16 +19,27 @@ class Tweet: NSObject {
 	var retweeted: Bool = false
 	var retweetStatus: Tweet?
 	var tweeter: User?
+	var entities: [String: Any?]?
+	var mediaURL: URL?
+	
 	
 	init(dict: [String: Any?]){
 		id = dict["id"] as? Int
 		
 		if let dic = dict["retweeted_status"] {
-			print("retweeted_status dic")
 			retweetStatus = Tweet(dict: dic as! [String : Any?])
-			print("retweetStatus: \(retweetStatus)")
 		}
-		
+		if let ents = dict["entities"] as? [String: Any?] {
+			entities = ents
+			if let media = ents["media"] as? [[String: Any?]]{
+				let dic = media[0]
+				if let mediaUrlString = dic["media_url_https"] as? String {
+					mediaURL = URL(string: mediaUrlString)
+				}
+			}
+			
+		}
+	
 		text = dict["text"] as? String
 		retweetCount = (dict["retweet_count"] as? Int) ?? 0
 		retweeted = dict["retweeted"] as! Bool
@@ -48,23 +59,7 @@ class Tweet: NSObject {
 			let formatter = DateFormatter()
 			formatter.dateFormat = "EEE MMM d HH:mm:ss Z y"
 			
-			createdAt = formatter.date(from: timeStampString)
-			
-
-//			formatter.dateFormat = "EEE MMM d HH:mm:ss Z y"
-//			let date = formatter.date(from: timeStampString)
-//			formatter.dateFormat = "M/dd/yy"
-//			let str = formatter.string(from: date!)
-//			createdAt = formatter.date(from: str)
-
-//
-//			
-//			let dateFormatter = DateFormatter()
-//			dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss z"
-//			let date = dateFormatter.date(from: date)
-//			dateFormatter.dateFormat = "yyyy-MM-dd"
-//			return  dateFormatter.string(from: date!)
-			
+			createdAt = formatter.date(from: timeStampString)			
 			
 		}
 		tweeter = User(dictionary: (dict["user"] as! [String : Any?]))

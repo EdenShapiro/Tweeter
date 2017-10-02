@@ -138,6 +138,7 @@ class TweetsTableVC: UIViewController, TweetCellDelegate {
 	@IBAction func didPostNewTweet(segue: UIStoryboardSegue) {
 		if let newTweetVC = segue.source as? NewTweetVC {
 			if let newestTweet = newTweetVC.finalTweet {
+				print("did post new tweet called")
 				tweets.insert(newestTweet, at: 0)
 				tableView.reloadData()
 			}

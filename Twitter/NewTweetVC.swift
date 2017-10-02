@@ -18,7 +18,6 @@ class NewTweetVC: UIViewController {
 	
 	
 	var postTweetButton: UIBarButtonItem!
-//	var postTweetButton: UIButton!
 	var characterCountView: UILabel!
 	var finalTweet: Tweet?
 	

@@ -70,12 +70,12 @@ class TwitterClient: BDBOAuth1SessionManager {
 		
 		var params: [String: Any]?
 		if let max = maxID {
-			params = ["max_id": "\(max)"]
+			params = ["max_id": "\(max)", "include_entities": "true"]
 			
 		}
 		get("1.1/statuses/home_timeline.json", parameters: params, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
 			
-			print("timeline: \(response)")
+//			print("timeline: \(response)")
 			let dicts = response as! [[String: Any?]]
 			let tweets = Tweet.tweetsWithArray(dicts: dicts)
 			success(tweets)

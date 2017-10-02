@@ -33,6 +33,14 @@ class TweetCell: UITableViewCell {
 	@IBOutlet weak var retweetSmallImageView: UIImageView!
 	@IBOutlet weak var retweetedByNameLabel: UILabel!
 	
+	@IBOutlet weak var mediaImageView: UIImageView!
+	
+	@IBOutlet weak var mediaImageHeightConstraint: NSLayoutConstraint!
+	
+	@IBOutlet weak var heartToMediaImageConstraint: NSLayoutConstraint!
+	
+	
+	
 	@IBOutlet weak var profPicimageViewTopConstraint: NSLayoutConstraint!
 	
 	var retweeterName: String?
@@ -41,29 +49,32 @@ class TweetCell: UITableViewCell {
 	
 	var tweet: Tweet! {
 		didSet {
-			let formatter = DateFormatter()
-			formatter.dateFormat = "M/dd/yy"
-			let charset = CharacterSet(charactersIn: "dwy")
-			if let date = tweet.createdAt {
-				let nsDate = date as NSDate
-				if nsDate.timeAgo().contains("mo") || nsDate.timeAgo().rangeOfCharacter(from: charset) != nil {
-					timeStampLabel.text = "∙ \(formatter.string(from: tweet.createdAt!))"
-				} else {
-					timeStampLabel.text = "∙ \(nsDate.timeAgo()!)"
-				}
-			}
+			
+			timeStampLabel.text = setUpDateLabel(date: tweet.createdAt)
 			tweetContentsLabel.text = tweet.text
+			setUpMediaImage(url: tweet.mediaURL)
+			setUpUserInfo(user: tweet.tweeter)
+			
 			if tweet.replyCount > 0 {
-				replyCountLabel.text = "\(tweet.replyCount)"
+				replyCountLabel.text = tweet.replyCount.formatToString()
+			} else {
+				replyCountLabel.text = ""
 			}
+			
 			if tweet.retweetCount > 0 {
-				retweetCountLabel.text = "\(tweet.retweetCount)"
+				retweetCountLabel.text = tweet.retweetCount.formatToString()
+			} else {
+				retweetCountLabel.text = ""
 			}
+			
 			if tweet.favoritesCount > 0 {
-				favoriteCountLabel.text = "\(tweet.favoritesCount)"
+				favoriteCountLabel.text = tweet.favoritesCount.formatToString()
+			} else  {
+				favoriteCountLabel.text = ""
 			}
 			
 			replyButton.setDeactivated(label: nil)
+			
 			if tweet.retweeted {
 				retweetButton.setActivated(color: .green, label: retweetCountLabel)
 			} else {
@@ -76,22 +87,59 @@ class TweetCell: UITableViewCell {
 				favoriteButton.setDeactivated(label: favoriteCountLabel)
 			}
 			
-			if let user = tweet.tweeter {
-				if let url = user.profileURL{
-					profilePicImageView.setImageWith(url)
-					profilePicImageView.clipsToBounds = true
-					profilePicImageView.layer.cornerRadius = 7
-				}
-				nameLabel.text = user.name
-				screenNameLabel.text = "@\(user.screenName!)"
-				
-			}
-			
 			updateCellToShowRetweetStatus()
+		}
+		
+	}
+	
+	func setUpUserInfo(user: User?){
+		if let user = user {
+			if let url = user.profileURL{
+				profilePicImageView.setImageWith(url)
+				profilePicImageView.clipsToBounds = true
+				profilePicImageView.layer.cornerRadius = 7
+			}
+			nameLabel.text = user.name
+			screenNameLabel.text = "@\(user.screenName!)"
+		}
+	}
+	
+	func setUpDateLabel(date: Date?) -> String {
+		if let date = date {
+			let charset = CharacterSet(charactersIn: "dwy")
+			let nsDate = date as NSDate
+			if nsDate.timeAgo().contains("mo") || nsDate.timeAgo().rangeOfCharacter(from: charset) != nil {
+				let formatter = DateFormatter()
+				formatter.dateFormat = "M/dd/yy"
+				return "∙ \(formatter.string(from: tweet.createdAt!))"
+			} else {
+				return "∙ \(nsDate.timeAgo()!)"
+			}
+		} else {
+			return ""
+		}
+	}
+	
+	func setUpMediaImage(url: URL?){
+		if let mediaUrl = url {
+			mediaImageView.setImageWith(mediaUrl)
+			mediaImageView.isHidden = false
+			heartToMediaImageConstraint.constant = 11.5
+			mediaImageHeightConstraint.constant = 180
+			mediaImageView.contentMode = .scaleAspectFill
+			mediaImageView.layer.cornerRadius = 7
+			mediaImageView.clipsToBounds = true
+			self.updateConstraints()
+		} else {
+			mediaImageView.image = nil
+			mediaImageView.isHidden = true
+			heartToMediaImageConstraint.constant = 0
+			mediaImageHeightConstraint.constant = 0
+			self.updateConstraints()
 			
 		}
-
 	}
+
 	
 	func updateCellToShowRetweetStatus(){
 		if let retweetName = retweeterName {
@@ -108,22 +156,28 @@ class TweetCell: UITableViewCell {
 			retweetSmallImageView.isHidden = true
 			self.updateConstraints()
 		}
-//		self.delegate?.reloadCell(cell: self, tweet: self.tweet)
-//		self.delegate?.updateTweetInfo(indexPath: self.indexPath, tweet: self.tweet)
 	}
 
 	@IBAction func favoriteButtonClicked(_ sender: Any) {
 		if favoriteButton.isSelected {
-			favoriteButton.setDeactivated(label: favoriteCountLabel)
-			TwitterClient.sharedInstance.unfavorite(tweetID: tweet.id!, success: { (tweet: Tweet) in
-				self.tweet = tweet
+			TwitterClient.sharedInstance.unfavorite(tweetID: tweet.id!, success: { (originalTweet: Tweet) in
+				self.delegate?.reloadCell(cell: self, tweet: originalTweet, success: { () in
+					self.favoriteButton.setDeactivated(label: self.favoriteCountLabel)
+					
+				}, failure: { () in
+					print("Error: Did not reload cell")
+				})
+				
 			}, failure: { (e: Error) in
 				print("Error: \(e.localizedDescription)")
 			})
 		} else {
-			favoriteButton.setActivated(color: .red, label: favoriteCountLabel)
-			TwitterClient.sharedInstance.favorite(tweetID: tweet.id!, success: { (tweet: Tweet) in
-				self.tweet = tweet
+			TwitterClient.sharedInstance.favorite(tweetID: tweet.id!, success: { (originalTweet: Tweet) in
+				self.delegate?.reloadCell(cell: self, tweet: originalTweet, success: { () in
+					self.favoriteButton.setActivated(color: .red, label: self.favoriteCountLabel)
+				}, failure: { () in
+					print("Error: Did not reload cell")
+				})
 			}, failure: { (e: Error) in
 				print("Error: \(e.localizedDescription)")
 			})
@@ -152,7 +206,6 @@ class TweetCell: UITableViewCell {
 						}, failure: { () in
 							print("Error: Did not reload cell")
 						})
-						//					self.delegate?.reloadCell(cell: self, tweet: originalTweet)
 					}, failure: { (e: Error) in
 						print("Error: \(e.localizedDescription)")
 					})
@@ -172,10 +225,6 @@ class TweetCell: UITableViewCell {
 					}, failure: { () in
 						print("Error: Did not reload cell")
 					})
-//						self.retweetButton.setDeactivated(label: self.retweetCountLabel)
-//					self.updateCellToShowRetweetStatus()
-//					self.retweetCountLabel.text = "\(self.tweet.retweetCount + 1)"
-//					self.retweetButton.setActivated(color: .green, label: self.retweetCountLabel)
 					
 				}, failure: { (e: Error) in
 					print("Error: \(e.localizedDescription)")
@@ -197,8 +246,29 @@ class TweetCell: UITableViewCell {
 
 }
 
+extension Double {
+	/// Rounds the double to decimal places value
+	func rounded(toPlaces places:Int) -> Double {
+		let divisor = pow(10.0, Double(places))
+		return (self * divisor).rounded() / divisor
+	}
+}
 
-//					
+
+
+extension Int {
+	func formatToString() -> String {
+		if self > 10000 {
+			return "\((Double(self)/1000).rounded(toPlaces: 1))k"
+		} else {
+			let numberFormatter = NumberFormatter()
+			numberFormatter.numberStyle = NumberFormatter.Style.decimal
+			return numberFormatter.string(from: NSNumber(value: self))!
+		}
+	}
+}
+
+//
 
 
 
