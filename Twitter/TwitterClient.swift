@@ -75,7 +75,6 @@ class TwitterClient: BDBOAuth1SessionManager {
 		}
 		get("1.1/statuses/home_timeline.json", parameters: params, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
 			
-//			print("timeline: \(response)")
 			let dicts = response as! [[String: Any?]]
 			let tweets = Tweet.tweetsWithArray(dicts: dicts)
 			success(tweets)
@@ -227,5 +226,78 @@ class TwitterClient: BDBOAuth1SessionManager {
 			
 		})
 	}
+	
+	
+	
+	// Get user's mentions timeline
+	//	GET https://api.twitter.com/1.1/statuses/mentions_timeline.json?count=2&since_id=14927799
+	func mentionsTimeline(maxID: Int?, success: @escaping ([Tweet]) -> (), failure: @escaping (Error) -> ()) {
+		
+		var params: [String: Any]?
+		if let max = maxID {
+			params = ["max_id": "\(max)", "include_entities": "true"]
+			
+		}
+		get("1.1/statuses/mentions_timeline.json", parameters: params, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
+			
+			print("timeline: \(response)")
+			let dicts = response as! [[String: Any?]]
+			let tweets = Tweet.tweetsWithArray(dicts: dicts)
+			success(tweets)
+			
+		}, failure: { (task: URLSessionDataTask?, error: Error) in
+			failure(error)
+		})
+	}
+	
+	
+	
+	// Get user's user timeline
+	//	GET https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=twitterapi&count=2
+	func userTimeline(screenName: String?, maxID: Int?, success: @escaping ([Tweet]) -> (), failure: @escaping (Error) -> ()) {
+		
+		var params: [String: Any] = ["include_entities": "true"]
+		if let max = maxID {
+			params["max_id"] = "\(max)"
+		}
+		
+		if let sn = screenName {
+			params["screen_name"] = sn
+		}
+
+		get("1.1/statuses/user_timeline.json", parameters: params, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
+			
+			print("timeline: \(response)")
+			let dicts = response as! [[String: Any?]]
+			let tweets = Tweet.tweetsWithArray(dicts: dicts)
+			success(tweets)
+			
+		}, failure: { (task: URLSessionDataTask?, error: Error) in
+			failure(error)
+		})
+	}
+	
+	// Get info for a specified user
+	//	GET https://api.twitter.com/1.1/users/show.json?screen_name=twitterdev
+	func getUserInfo(screenName: String, success: @escaping (User) -> (), failure: @escaping (Error) -> ()) {
+		
+		let params: [String: Any] = ["screen_name": screenName]
+		
+		get("1.1/users/show.json", parameters: params, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
+			let userDict = response as! [String: Any?]
+			let user = User(dictionary: userDict)
+			success(user)
+			
+		}, failure: { (task: URLSessionDataTask?, error: Error) in
+			failure(error)
+		})
+	}
+
+	
+	
+	
+	
+	
+	
 
 }

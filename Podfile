@@ -9,6 +9,7 @@ target 'Twitter' do
 	pod 'BDBOAuth1Manager'
 	pod 'KRProgressHUD'
 	pod 'NSDateMinimalTimeAgo'
+	pod 'FXBlurView'
 
   target 'TwitterTests' do
     inherit! :search_paths

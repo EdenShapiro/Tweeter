@@ -14,6 +14,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>FXBlurView.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>KRActivityIndicatorView.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -57,7 +62,7 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>7ABD746D79FE047F9C92F187003688E6</key>
+		<key>13E635F1A8B06D0D801DC9686C7795D0</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -68,6 +73,11 @@
 			<true/>
 		</dict>
 		<key>B4D1E603FA62B9D172FE57E7242492AD</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>BD5BFC2F630B07DE8A20EBC90A7C8D49</key>
 		<dict>
 			<key>primary</key>
 			<true/>

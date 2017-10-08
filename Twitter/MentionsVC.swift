@@ -1,15 +1,17 @@
 //
-//  TweetsTableVC.swift
+//  MentionsVC.swift
 //  Twitter
 //
-//  Created by Eden on 9/25/17.
+//  Created by Eden on 10/6/17.
 //  Copyright © 2017 Eden Shapiro. All rights reserved.
 //
 
 import UIKit
 import KRProgressHUD
 
-class TweetsTableVC: UIViewController, TweetCellDelegate {
+class MentionsVC: UIViewController, TweetCellDelegate {
+	
+//	class TweetsTableVC: UIViewController, TweetCellDelegate {
 	@IBOutlet weak var tableView: UITableView!
 	@IBOutlet weak var birdImage: UIImageView!
 	@IBOutlet weak var newTweetButton: UIBarButtonItem!
@@ -28,7 +30,7 @@ class TweetsTableVC: UIViewController, TweetCellDelegate {
 		tableView.rowHeight = UITableViewAutomaticDimension
 		
 		// Fetch timeline tweets
-		TwitterClient.sharedInstance.homeTimeline(maxID: nil, success: { (tweets: [Tweet]) in
+		TwitterClient.sharedInstance.mentionsTimeline(maxID: nil, success: { (tweets: [Tweet]) in
 			self.tweets = tweets
 			self.tableView.reloadData()
 			KRProgressHUD.showSuccess()
@@ -49,7 +51,7 @@ class TweetsTableVC: UIViewController, TweetCellDelegate {
 		setUpInfiniteScrolling()
 	}
 	
-//================================================== Helper Methods =====================================================
+	//================================================== Helper Methods =====================================================
 	
 	func setUpUI(){
 		birdImage.changeToColor(color: UIColor.TwitterColors.Blue)
@@ -82,7 +84,7 @@ class TweetsTableVC: UIViewController, TweetCellDelegate {
 	}
 	
 	func refreshControlAction(_ refreshControl: UIRefreshControl) {
-		TwitterClient.sharedInstance.homeTimeline(maxID: nil, success: { (tweets: [Tweet]) in
+		TwitterClient.sharedInstance.mentionsTimeline(maxID: nil, success: { (tweets: [Tweet]) in
 			self.tweets = tweets
 			self.tableView.reloadData()
 			refreshControl.endRefreshing()
@@ -96,16 +98,8 @@ class TweetsTableVC: UIViewController, TweetCellDelegate {
 		
 	}
 	
-//	func handleProfPicTap(){
-//
-//		
-//		
-//		
-//		
-//	}
+	//================================================== Delegate Methods =====================================================
 	
-//================================================== Delegate Methods =====================================================
-
 	func updateTweetInfo(indexPath: IndexPath, tweet: Tweet){
 		tweets[indexPath.row] = tweet
 		tableView.reloadRows(at: [indexPath], with: .automatic)
@@ -148,7 +142,7 @@ class TweetsTableVC: UIViewController, TweetCellDelegate {
 		TwitterClient.sharedInstance.logout()
 	}
 	
-//================================================== Segue Methods =====================================================
+	//================================================== Segue Methods =====================================================
 	
 	@IBAction func didPostNewTweet(segue: UIStoryboardSegue) {
 		if let newTweetVC = segue.source as? NewTweetVC {
@@ -179,7 +173,7 @@ class TweetsTableVC: UIViewController, TweetCellDelegate {
 			let newTweetVC = segue.destination as! NewTweetVC
 			newTweetVC.replyTweetId = replyTweetData?.0
 			newTweetVC.replyTweetScreenName = replyTweetData?.1
-	
+			
 		}
 	}
 }
@@ -188,7 +182,7 @@ class TweetsTableVC: UIViewController, TweetCellDelegate {
 //================================================== TweetsTableVC Extensions =====================================================
 
 
-extension TweetsTableVC: UITableViewDelegate, UITableViewDataSource {
+extension MentionsVC: UITableViewDelegate, UITableViewDataSource {
 	
 	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		tableView.deselectRow(at: indexPath, animated:true)
@@ -198,7 +192,6 @@ extension TweetsTableVC: UITableViewDelegate, UITableViewDataSource {
 		let cell = tableView.dequeueReusableCell(withIdentifier: "TweetCell") as! TweetCell
 		cell.delegate = self
 		cell.retweeterName = nil
-		
 		if let retweetStatus = tweets[indexPath.row].retweetStatus {
 			cell.retweeterName = tweets[indexPath.row].tweeter!.name
 			cell.tweet = retweetStatus
@@ -218,7 +211,7 @@ extension TweetsTableVC: UITableViewDelegate, UITableViewDataSource {
 
 
 
-extension TweetsTableVC: UIScrollViewDelegate {
+extension MentionsVC: UIScrollViewDelegate {
 	func scrollViewDidScroll(_ scrollView: UIScrollView) {
 		if (!isMoreDataLoading) {
 			// Calculate the position of one screen length before the bottom of the results
@@ -235,7 +228,7 @@ extension TweetsTableVC: UIScrollViewDelegate {
 	}
 	
 	func loadMoreData() {
-		TwitterClient.sharedInstance.homeTimeline(maxID: tweets[tweets.count - 1].id!, success: { (tweets: [Tweet]) in
+		TwitterClient.sharedInstance.mentionsTimeline(maxID: tweets[tweets.count - 1].id!, success: { (tweets: [Tweet]) in
 			self.isMoreDataLoading = false
 			self.tweets.append(contentsOf: tweets.dropFirst())
 			self.tableView.reloadData()
@@ -251,76 +244,3 @@ extension TweetsTableVC: UIScrollViewDelegate {
 }
 
 
-//================================================== Unrelated Extensions ======================================================
-
-extension UIButton {
-	func setActivated(color: UIColor, label: UILabel?){
-		self.isSelected = true
-		let orginalImage = self.imageView?.image
-		let newColorImage = orginalImage?.withRenderingMode(.alwaysTemplate)
-		self.setImage(newColorImage, for: .selected)
-		self.tintColor = color
-		if let lab = label {
-			lab.textColor = color
-		}
-	}
-	
-	func setDeactivated(label: UILabel?){
-		self.isSelected = false
-		let orginalImage = self.imageView?.image
-		let newColorImage = orginalImage?.withRenderingMode(.alwaysTemplate)
-		self.setImage(newColorImage, for: .normal)
-		self.tintColor = .darkGray
-		if let lab = label {
-			lab.textColor = .darkGray
-		}
-	}
-}
-
-extension UIColor {
-	
-	convenience init(red: Int, green: Int, blue: Int) {
-		assert(red >= 0 && red <= 255, "Invalid red component")
-		assert(green >= 0 && green <= 255, "Invalid green component")
-		assert(blue >= 0 && blue <= 255, "Invalid blue component")
-		self.init(red: CGFloat(red) / 255.0, green: CGFloat(green) / 255.0, blue: CGFloat(blue) / 255.0, alpha: 1.0)
-	}
-	
-	convenience init(netHex:Int) {
-		self.init(red:(netHex >> 16) & 0xff, green:(netHex >> 8) & 0xff, blue:netHex & 0xff)
-	}
-	
-	struct TwitterColors {
-		static let Blue = UIColor(netHex: 0x00ACED)
-		static let DarkBlue = UIColor(netHex: 0x0084B4)
-		static let VerifiedBlue = UIColor(netHex: 0x1dcaff)
-		static let BackgroundBlue = UIColor(netHex: 0xc0deed)
-	}
-}
-
-extension UIImageView {
-	func changeToColor(color: UIColor){
-		self.image = self.image!.withRenderingMode(.alwaysTemplate)
-		self.tintColor = color
-	}
-}
-
-extension UIImage {
-	public convenience init?(color: UIColor, size: CGSize = CGSize(width: 1, height: 1)) {
-		let rect = CGRect(origin: .zero, size: size)
-		UIGraphicsBeginImageContextWithOptions(rect.size, false, 0.0)
-		color.setFill()
-		UIRectFill(rect)
-		let image = UIGraphicsGetImageFromCurrentImageContext()
-		UIGraphicsEndImageContext()
-		
-		guard let cgImage = image?.cgImage else { return nil }
-		self.init(cgImage: cgImage)
-	}
-}
-
-
-//extension TweetsTableVC: TweetDetailDelegate {
-//
-//
-//}

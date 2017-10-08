@@ -98,7 +98,7 @@ class NewTweetVC: UIViewController {
 		print("postTweetButton clicked")
 		
 		// Heads Up Display
-		KRProgressHUD.set(style: .black)
+		KRProgressHUD.set(style: .white)
 		KRProgressHUD.set(font: .systemFont(ofSize: 15))
 		KRProgressHUD.set(activityIndicatorViewStyle: .gradationColor(head: UIColor.TwitterColors.Blue, tail: UIColor.TwitterColors.DarkBlue))
 		KRProgressHUD.show(withMessage: "Posting Tweet...")

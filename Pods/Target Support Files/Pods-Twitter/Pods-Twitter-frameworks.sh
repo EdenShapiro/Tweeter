@@ -91,6 +91,7 @@ strip_invalid_archs() {
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/AFNetworking/AFNetworking.framework"
   install_framework "$BUILT_PRODUCTS_DIR/BDBOAuth1Manager/BDBOAuth1Manager.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/FXBlurView/FXBlurView.framework"
   install_framework "$BUILT_PRODUCTS_DIR/KRActivityIndicatorView/KRActivityIndicatorView.framework"
   install_framework "$BUILT_PRODUCTS_DIR/KRProgressHUD/KRProgressHUD.framework"
   install_framework "$BUILT_PRODUCTS_DIR/NSDateMinimalTimeAgo/NSDateMinimalTimeAgo.framework"
@@ -98,6 +99,7 @@ fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/AFNetworking/AFNetworking.framework"
   install_framework "$BUILT_PRODUCTS_DIR/BDBOAuth1Manager/BDBOAuth1Manager.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/FXBlurView/FXBlurView.framework"
   install_framework "$BUILT_PRODUCTS_DIR/KRActivityIndicatorView/KRActivityIndicatorView.framework"
   install_framework "$BUILT_PRODUCTS_DIR/KRProgressHUD/KRProgressHUD.framework"
   install_framework "$BUILT_PRODUCTS_DIR/NSDateMinimalTimeAgo/NSDateMinimalTimeAgo.framework"

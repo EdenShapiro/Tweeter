@@ -15,6 +15,7 @@ import NSDateMinimalTimeAgo
 	func updateTweetInfo(indexPath: IndexPath, tweet: Tweet)
 	func presentAlertViewController(alertController: UIAlertController)
 	func reloadCell(cell: TweetCell, tweet: Tweet, success: @escaping () -> (), failure: @escaping () -> ())
+	func segueToUserProfile(screenName: String)
 }
 
 class TweetCell: UITableViewCell {
@@ -233,9 +234,6 @@ class TweetCell: UITableViewCell {
 			alertController.addAction(retweet)
 		}
 		self.delegate?.presentAlertViewController(alertController: alertController)
-
-		
-		
 	}
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -243,6 +241,30 @@ class TweetCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
+	
+	func handleProfPicTap(){
+		print("profile pic tapped!")
+		
+		if let sn = screenNameLabel.text {
+			self.delegate?.segueToUserProfile(screenName: sn)
+
+		}
+		
+		
+		
+		
+		
+	}
+	
+	override func awakeFromNib() {
+		super.awakeFromNib()
+		
+		// add image tap gesture
+		let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleProfPicTap))
+		profilePicImageView.addGestureRecognizer(tapGesture)
+		profilePicImageView.isUserInteractionEnabled = true
+		tapGesture.delegate = self
+	}
 
 }
 
