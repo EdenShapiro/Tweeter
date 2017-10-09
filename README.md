@@ -69,16 +69,9 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 
 ["Quote"](https://thenounproject.com/search/?q=mention&i=918409) icon by Bakunetsu Kaito from [the Noun Project](http://thenounproject.com/)  
-["account"](https://thenounproject.com/search/?q=account&i=1048020) icons by Chinnaking from [the Noun Project](http://thenounproject.com/)  
-
-["Home"](https://thenounproject.com/search/?q=home&i=943764) By Focus 
-
-["At"] By Stefan Parnarov, BG https://thenounproject.com/search/?q=mention&i=94103  
-
-people By Doub.co https://thenounproject.com/search/?q=friends&i=33934  
-
-Add User By David, US https://thenounproject.com/search/?q=follower&i=428966  
-
-
-
+["account"](https://thenounproject.com/search/?q=account&i=1048020) icon by Chinnaking from [the Noun Project](http://thenounproject.com/)  
+["Home"](https://thenounproject.com/search/?q=home&i=943764) icon by Focus from [the Noun Project](http://thenounproject.com/)  
+["At"](https://thenounproject.com/search/?q=mention&i=94103  ) icon by Stefan Parnarov, BG from [the Noun Project](http://thenounproject.com/)  
+["people"](https://thenounproject.com/search/?q=friends&i=33934) icon by Doub.co from [the Noun Project](http://thenounproject.com/)  
+["Add User"](https://thenounproject.com/search/?q=follower&i=428966) icon by David, US from [the Noun Project](http://thenounproject.com/)  
 
