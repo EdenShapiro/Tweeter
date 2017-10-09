@@ -137,6 +137,12 @@ class TweetsTableVC: UIViewController, TweetCellDelegate {
 			let storyboard = UIStoryboard(name: "Main", bundle: nil)
 			let profVC = storyboard.instantiateViewController(withIdentifier: "ProfileVC") as! ProfileVC
 			profVC.user = user
+			self.navigationItem.title = ""
+
+//			self.navigationController?.navigationBar.backIndicatorImage
+
+//			self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+
 			self.navigationController?.pushViewController(profVC, animated: true)
 		}, failure: { (e: Error) in
 			print("There was an error in handleProfPicTap: \(e.localizedDescription)")

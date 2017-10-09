@@ -19,12 +19,6 @@ class HamburgerVC: UIViewController {
 		didSet {
 			view.layoutIfNeeded()
 			
-//			if oldContentViewController != nil {
-//				oldContentViewController.willMove(toParentViewController: nil)
-//				oldContentViewController.view.removeFromSuperview()
-//				oldContentViewController.didMove(toParentViewController: nil)
-//			}
-			
 			menuViewController.willMove(toParentViewController: self)
 			menuView.addSubview(menuViewController.view)
 			menuViewController.didMove(toParentViewController: self)
@@ -55,7 +49,6 @@ class HamburgerVC: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		// Do any additional setup after loading the view.
 	}
 	
 	@IBAction func onPanGesture(_ sender: UIPanGestureRecognizer) {
@@ -70,7 +63,7 @@ class HamburgerVC: UIViewController {
 			
 			UIView.animate(withDuration: 0.3, animations: {
 				if velocity.x > 0 { //opening menu
-					self.leftMarginConstraint.constant = self.view.frame.size.width - 50
+					self.leftMarginConstraint.constant = self.view.frame.size.width - self.view.frame.size.width/2
 				} else { //closing menu
 					self.leftMarginConstraint.constant = 0
 				}

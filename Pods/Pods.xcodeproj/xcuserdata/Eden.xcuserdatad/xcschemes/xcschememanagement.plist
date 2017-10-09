@@ -14,6 +14,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>FLEX.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>FXBlurView.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -62,7 +67,12 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>13E635F1A8B06D0D801DC9686C7795D0</key>
+		<key>30E1E10085CD1B99DA4A8F1B631DF225</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>68A07EF405FD9BCB32A62DB85FB63511</key>
 		<dict>
 			<key>primary</key>
 			<true/>

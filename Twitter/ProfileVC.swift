@@ -33,8 +33,10 @@ class ProfileVC: UIViewController, TweetCellDelegate {
 	@IBOutlet weak var tweetsSegmentedControl: UISegmentedControl!
 	@IBOutlet weak var followingCountLabel: UILabel!
 	@IBOutlet weak var followersCountLabel: UILabel!
-	
 	@IBOutlet weak var tableHeaderView: UIView!
+	
+	@IBOutlet weak var navItem: UINavigationItem!
+	
 	
 	var user: User!
 	
@@ -74,14 +76,10 @@ class ProfileVC: UIViewController, TweetCellDelegate {
 	
 	override func viewDidLayoutSubviews() {
 		super.viewDidLayoutSubviews()
-//		guard let header = tableView.tableHeaderView else {
-//			print("there is no tableHeaderView")
-//			return
-//		}
-		let size = headerView.systemLayoutSizeFitting(UILayoutFittingCompressedSize)
-		if headerView.frame.size.height != size.height {
-			headerView.frame.size.height = size.height
-			tableView.tableHeaderView = headerView
+		let size = tableHeaderView.systemLayoutSizeFitting(UILayoutFittingCompressedSize)
+		if tableHeaderView.frame.size.height != size.height {
+			tableHeaderView.frame.size.height = size.height
+			tableView.tableHeaderView = tableHeaderView
 			tableView.layoutIfNeeded()
 		}
 	}
@@ -138,46 +136,35 @@ class ProfileVC: UIViewController, TweetCellDelegate {
 		
 		profileName.text = user.name
 		profileScreenName.text = "@\(user.screenName!)"
-		if user == User.currentUser {
-			profileExtraButton.titleLabel?.text = "Accounts"
+		if user.screenName == User.currentUser?.screenName {
+		
+			profileExtraButton.setImage(UIImage(named: "accounts"), for: .normal)
+			profileExtraButton.setTitle("Accounts", for: .normal)
 			//insert action
 		} else {
-			profileExtraButton.titleLabel?.text = "Follow"
+			profileExtraButton.setImage(UIImage(named: "follow"), for: .normal)
+			profileExtraButton.setTitle("Follow", for: .normal)
+
 			//insert follow action
 		}
 		
+		profileExtraButton.imageView?.changeToColor(color: UIColor.TwitterColors.Blue)
 		profileExtraButton.layer.cornerRadius = 7
 		profileExtraButton.layer.borderWidth = 0.8
 		profileExtraButton.layer.borderColor = UIColor.TwitterColors.Blue.cgColor
-		
 		
 		headerLabel.text = user.name
 		if let descrip = user.profileDescription {
 			descriptionLabel.text = descrip
 		}
 		
-		newTweetButton.tintColor = .white
-		
-		let items = self.navigationController?.navigationBar.items
-		
-		self.presentingViewController?.navigationItem.backBarButtonItem?.title = ""
-		self.presentingViewController?.navigationController?.navigationItem.backBarButtonItem?.title = ""
-		self.navigationController?.navigationBar.backItem?.backBarButtonItem?.title = ""
-		self.navigationController?.navigationBar.backItem?.leftBarButtonItem?.title = ""
-		self.navigationController?.navigationItem.backBarButtonItem?.title = ""
-		self.navigationItem.backBarButtonItem?.title = ""
-		
-		
-		
-		self.navigationItem.backBarButtonItem?.tintColor = .white
-
-
 		self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
 		self.navigationController?.navigationBar.shadowImage = UIImage()
 		self.navigationController?.navigationBar.barTintColor = .clear
 		self.navigationController?.navigationBar.backgroundColor = .clear
 		self.navigationController?.navigationBar.isTranslucent = true
-		
+		self.navigationController?.navigationBar.tintColor = UIColor.TwitterColors.Blue
+
 		self.view.layoutSubviews()
 	}
 	

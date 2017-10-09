@@ -131,6 +131,7 @@ class MentionsVC: UIViewController, TweetCellDelegate {
 			let storyboard = UIStoryboard(name: "Main", bundle: nil)
 			let profVC = storyboard.instantiateViewController(withIdentifier: "ProfileVC") as! ProfileVC
 			profVC.user = user
+			self.navigationItem.title = ""
 			self.navigationController?.pushViewController(profVC, animated: true)
 		}, failure: { (e: Error) in
 			print("There was an error in handleProfPicTap: \(e.localizedDescription)")

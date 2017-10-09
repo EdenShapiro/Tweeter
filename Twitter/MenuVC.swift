@@ -12,6 +12,11 @@ class MenuVC: UIViewController {
 	
 	@IBOutlet weak var tableView: UITableView!
 
+	@IBOutlet weak var birdImage: UIImageView!
+	
+	
+	@IBOutlet weak var tableHeaderView: UIView!
+	
 	private var homeNavigationController: UINavigationController!
 	private var mentionsNavigationController: UINavigationController!
 	private var meNavigationController: UINavigationController!
@@ -25,6 +30,11 @@ class MenuVC: UIViewController {
         super.viewDidLoad()
 		tableView.delegate = self
 		tableView.dataSource = self
+		tableView.separatorStyle = .none
+		
+		birdImage.changeToColor(color: UIColor.TwitterColors.Blue)
+		
+		tableHeaderView.backgroundColor = UIColor.TwitterColors.BackgroundBlue
 		
 		let storyboard = UIStoryboard(name: "Main", bundle: nil)
 		//			let vc = storyboard.instantiateViewController(withIdentifier: "TweetsNavigationController")
@@ -60,7 +70,11 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
 		let cell = tableView.dequeueReusableCell(withIdentifier: "MenuCell") as! MenuCell
 		
 		let titles = ["Home", "Mentions", "Me"]
+		let icons = ["home", "at", "account"]
 		cell.title.text = titles[indexPath.row]
+//		cell.title.textColor = UIColor.TwitterColors.BackgroundBlue
+		cell.iconImageView.image = UIImage(named: icons[indexPath.row])
+		cell.iconImageView.changeToColor(color: UIColor.TwitterColors.BackgroundBlue)
 		return cell
 	}
 	

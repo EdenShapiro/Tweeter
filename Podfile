@@ -10,6 +10,7 @@ target 'Twitter' do
 	pod 'KRProgressHUD'
 	pod 'NSDateMinimalTimeAgo'
 	pod 'FXBlurView'
+	pod 'FLEX'
 
   target 'TwitterTests' do
     inherit! :search_paths
