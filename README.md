@@ -1,6 +1,6 @@
 # Twitter Clone
 
-**Twitter** is a basic twitter app to read and compose tweets from the [Twitter API](https://apps.twitter.com/).
+**Twitter Clone** is a basic twitter app to read and compose tweets from the [Twitter API](https://apps.twitter.com/).
 
 Time spent: **40** hours spent in total
 
