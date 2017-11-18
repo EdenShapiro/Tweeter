@@ -1,6 +1,6 @@
-# Twitter Clone
+# Tweeter
 
-**Twitter Clone** is a basic twitter app to read and compose tweets from the [Twitter API](https://apps.twitter.com/).
+**Tweeter** is a basic twitter app to read and compose tweets from the [Twitter API](https://apps.twitter.com/).
 
 Time spent: **40** hours spent in total
 
@@ -40,8 +40,6 @@ The following **additional** features are implemented:
 - [x] Custom nav bar
 
 
-
-
 Please list two areas of the assignment you'd like to **discuss further with your peers** during the next class (examples include better ways to implement something, how to extend your app in certain ways, etc):
 
 1. Ways to implement link highlighting
@@ -63,10 +61,6 @@ https://media.giphy.com/media/l1J9CmBGZc8RyWmkw/giphy.gif
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
-## Notes
-
-Describe any challenges encountered while building the app.
-
 ## License
 
     Copyright [2017] [Eden Shapiro]
@@ -84,7 +78,7 @@ Describe any challenges encountered while building the app.
     limitations under the License.
 
 
-
+## Credits
 
 ["Close"](https://thenounproject.com/search/?q=x&i=636464) icon by Hui Qin Ng from [the Noun Project](http://thenounproject.com/)  
 ["Heart", "Reply", and "Repost"](https://thenounproject.com/albertine3/collection/fb-tw-timeline-icon/?oq=twitter&cidx=5&i=438344) icons by Al D from [the Noun Project](http://thenounproject.com/)  
